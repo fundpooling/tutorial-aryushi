@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "question": "What is your name?",
+    "type": "text",
+    "required": true
+  },
+  {
+    "id": 2,
+    "question": "What is your favorite programming language?",
+    "type": "multiple-choice",
+    "options": ["Java", "Python", "C++", "JavaScript"],
+    "required": true
+  }
+]
