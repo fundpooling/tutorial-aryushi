@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="user-container">
+    <h2>Add User</h2>
+    <form (ngSubmit)="addUser()">
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="user.name" name="name" required />
+      <span *ngIf="errors.name" class="error">{{ errors.name }}</span>
+
+      <label>Email:</label>
+      <input type="email" [(ngModel)]="user.email" name="email" required />
+      <span *ngIf="errors.email" class="error">{{ errors.email }}</span>
+
+      <label>Mobile:</label>
+      <input
+        type="text"
+        [(ngModel)]="user.mobileNumber"
+        name="mobile"
+        required
+      />
+      <span *ngIf="errors.mobileNumber" class="error">{{
+        errors.mobileNumber
+      }}</span>
+
+      <label>Address:</label>
+      <textarea [(ngModel)]="user.address" name="address" required></textarea>
+      <span *ngIf="errors.address" class="error">{{ errors.address }}</span>
+
+      <button type="submit">Add User</button>
+    </form>
+  </div>
+</div>

@@ -1,66 +1,171 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
+export interface User {
+  id: number;
+  address: string;
+  email: string;
+  mobile_number: string;
+  name: string;
+}
 @Component({
   selector: 'app-survey',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.css'],
 })
 export class SurveyComponent implements OnInit {
-  questions: any[] = [
-    {
-      id: 1,
-      question: 'What is your name?',
-      type: 'text',
-      required: true,
-    },
-    {
-      id: 2,
-      question: 'What is your gender?',
-      type: 'multiple-choice',
-      required: true,
-      options: ['Male', 'Female', 'Other'],
-    },
-    {
-      id: 3,
-      question: 'Which country do you live in?',
-      type: 'dropdown',
-      required: true,
-      options: ['India', 'USA', 'UK', 'Canada'],
-    },
-  ];
-
+  questions: any[] = [];
   userResponses: { [key: string]: any } = {};
+  users: User[] = [];
+  surveySubmitted: boolean = false;
+  selectedUser: User = {
+    id: 0,
+    name: '',
+    address: '',
+    email: '',
+    mobile_number: '',
+  };
 
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  constructor(private router: Router) {}
 
   ngOnInit() {
-    console.log('Survey Questions:', this.questions);
+    this.loadQuestions();
+    this.loadUsers();
+  }
+
+  loadQuestions() {
+    this.http.get<any[]>('/assets/survey-question.json').subscribe({
+      next: (data) => {
+        this.questions = data;
+        console.log('Survey Questions Loaded:', this.questions);
+      },
+      error: (error) => {
+        console.error('Error loading survey questions:', error);
+      },
+    });
+  }
+  onUserChange(selectedUser: any) {
+    this.selectedUser = selectedUser ?? 0;
+    console.log('Selected User ID:', this.selectedUser);
+    this.checkIfSurveySubmitted();
+  }
+  checkIfSurveySubmitted() {
+    if (!this.selectedUser) return;
+
+    const url = `http://localhost:9090/api/survey/${this.selectedUser}`;
+    this.http.get<{ status: string }>(url).subscribe({
+      next: (response) => {
+        console.log('Survey Submission Status:', response);
+        if (response !== null) {
+          alert('User has already submitted the survey.');
+          this.surveySubmitted = true;
+        } else {
+          this.surveySubmitted = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error checking survey submission:', error);
+        this.surveySubmitted = false;
+      },
+    });
+  }
+
+  loadUsers() {
+    this.http.get<any[]>('http://localhost:9090/api/users').subscribe({
+      next: (data) => {
+        this.users = data.map((user) => ({
+          id: user.id,
+          address: user.address,
+          email: user.email,
+          mobile_number: user.mobile_number,
+          name: user.name,
+        }));
+
+        console.log('Users Loaded:', this.users);
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+      },
+    });
   }
 
   submitForm() {
-    const responses = Object.keys(this.userResponses).map((key) => ({
-      question: this.questions.find((q) => q.id.toString() === key)?.question,
-      answer: this.userResponses[key],
-    }));
+    if (!this.selectedUser) {
+      alert('Please select a user.');
+      return;
+    }
+    if (this.surveySubmitted) {
+      alert('User has already submitted the survey.');
+      return;
+    }
 
-    console.log('Formatted User Responses:', responses);
+    const unansweredQuestions = this.questions.filter((question) => {
+      return !this.userResponses[question.id];
+    });
 
-    this.http
-      .post('http://localhost:9090/api/survey/submit', responses)
-      .subscribe({
-        next: (response) => {
-          alert('Survey submitted successfully!');
-          console.log('Response from backend:', response);
-        },
-        error: (error) => {
-          alert('Failed to submit survey!');
-          console.error('Error:', error);
-        },
-      });
+    if (unansweredQuestions.length > 0) {
+      alert('Please answer all the questions before submitting.');
+      return;
+    }
+
+    const responses = Object.keys(this.userResponses).map((key) => {
+      const question = this.questions.find((q) => q.id.toString() === key);
+      let answer = this.userResponses[key];
+
+      if (Array.isArray(answer)) {
+        answer = answer.join(', ');
+      }
+
+      return {
+        question: question?.question,
+        answer: answer,
+      };
+    });
+
+    // const payload = {
+    //   userId: this.selectedUser,
+    //   responses,
+    // };
+    console.log(responses);
+    console.log(this.selectedUser);
+    const url = `http://localhost:9090/api/survey/submit/${this.selectedUser}`;
+
+    this.http.post(url, responses).subscribe({
+      next: (response) => {
+        alert('Survey submitted successfully!');
+        console.log('Response from backend:', response);
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        alert('Failed to submit survey!');
+        console.error('Error:', error);
+      },
+    });
+  }
+  backToHome() {
+    console.log('Redirect to home page');
+    this.router.navigate(['/home']);
+  }
+
+  updateCheckboxSelection(event: Event, questionId: number, option: string) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (!this.userResponses[questionId]) {
+      this.userResponses[questionId] = [];
+    }
+
+    if (checked) {
+      this.userResponses[questionId].push(option);
+    } else {
+      this.userResponses[questionId] = this.userResponses[questionId].filter(
+        (item: string) => item !== option
+      );
+    }
   }
 }

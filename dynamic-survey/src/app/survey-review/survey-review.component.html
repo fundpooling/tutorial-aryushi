@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survey Form</title>
+  </head>
+  <body>
+    <form
+      class="mt-16 max-w-3xl mx-auto p-8 bg-white rounded-xl shadow-lg space-y-8 px-4 sm:px-8"
+    >
+      <div class="header">
+        <option>Select User</option>
+        <div class="dropdown-container">
+          <select
+            [(ngModel)]="selectedUser"
+            name="user"
+            (ngModelChange)="onUserChange($event)"
+          >
+            <option *ngFor="let user of users" [value]="user.id">
+              {{ user.name }}
+            </option>
+          </select>
+        </div>
+        <div class="button-container">
+          <button class="add-user-btn" (click)="goHome()">Home</button>
+        </div>
+      </div>
+
+      <div *ngIf="!surveySubmitted" class="submitted-message">
+        <p class="text-center text-lg font-semibold text-red-500">
+          Please fill the survey.
+        </p>
+      </div>
+
+      <div *ngIf="surveySubmitted">
+        <div *ngFor="let question of questions" class="space-y-4">
+          <label
+            class="block font-medium text-gray-700 text-base sm:text-lg lg:text-xl"
+          >
+            {{ question.question }}
+          </label>
+          <p class="text-gray-600">{{ question.answer }}</p>
+        </div>
+
+        <div class="flex justify-between mt-6">
+          <!-- <button
+            (click)="editSurvey()"
+            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
+          >
+            Edit Survey
+          </button> -->
+
+          <button
+            (click)="deleteSurvey()"
+            class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700"
+          >
+            Delete Survey
+          </button>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

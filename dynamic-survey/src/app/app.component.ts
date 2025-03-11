@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SurveyComponent } from './survey/survey.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, SurveyComponent],
-  template: `<app-survey></app-survey>`,
+  imports: [RouterModule],
+  template: `<router-outlet></router-outlet>`,
 })
-export class AppComponent {
-  title = 'dynamic-survey';
-}
+export class AppComponent {}

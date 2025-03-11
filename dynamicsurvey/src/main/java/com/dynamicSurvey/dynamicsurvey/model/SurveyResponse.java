@@ -1,6 +1,13 @@
+
 package com.dynamicSurvey.dynamicsurvey.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class SurveyResponse {
@@ -9,51 +16,35 @@ public class SurveyResponse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String question;
-    private String answer;
+    @OneToOne
+    @JoinColumn(name = "users_id", unique = true)
+    @JsonIgnore
+    private User user;
 
-    // Default constructor (required by JPA)
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+
+    @OneToMany(mappedBy = "surveyResponse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SurveyQuestionAnswer> responses = new ArrayList<>();
+
+
+
     public SurveyResponse() {}
 
-    // Parameterized constructor
-    public SurveyResponse(Long id, String question, String answer) {
+
+    public SurveyResponse(Long id, User user) {
         this.id = id;
-        this.question = question;
-        this.answer = answer;
+        this.user = user;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public void addResponse(SurveyQuestionAnswer response) {
+        responses.add(response);
+        response.setSurveyResponse(this);
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    // toString method for debugging
-    @Override
-    public String toString() {
-        return "SurveyResponse{" +
-                "id=" + id +
-                ", question='" + question + '\'' +
-                ", answer='" + answer + '\'' +
-                '}';
-    }
+    public List<SurveyQuestionAnswer> getResponses() { return responses; }
 }
+

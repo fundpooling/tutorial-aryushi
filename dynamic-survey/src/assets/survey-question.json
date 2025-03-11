@@ -1,0 +1,107 @@
+[
+  {
+    "id": 1,
+    "question": "What is your age group?",
+    "type": "dropdown",
+    "required": true,
+    "options": ["18-24", "25-34", "35-44", "45-54", "55+"]
+  },
+  {
+    "id": 2,
+    "question": "Have you invested before?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": ["Yes", "No"]
+  },
+  {
+    "id": 3,
+    "question": "What type of investments are you most interested in?",
+    "type": "checkbox",
+    "required": true,
+    "options": [
+      "Real Estate",
+      "Startups",
+      "Stocks & ETFs",
+      "Crypto & Blockchain",
+      "Private Equity",
+      "Other"
+    ]
+  },
+  {
+    "id": 4,
+    "question": "Would you be interested in pooling funds with friends/family to invest in exclusive opportunities?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": ["Yes", "No", "Maybe"]
+  },
+  {
+    "id": 5,
+    "question": "How would you describe your risk tolerance?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": ["Low", "Medium", "High"]
+  },
+  {
+    "id": 6,
+    "question": "What is your primary goal with investing?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": [
+      "Wealth accumulation",
+      "Passive income",
+      "Retirement planning",
+      "Short-term profits"
+    ]
+  },
+  {
+    "id": 7,
+    "question": "How comfortable are you with co-investing with a group?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": ["Very comfortable", "Somewhat comfortable", "Not comfortable"]
+  },
+  {
+    "id": 8,
+    "question": "What factors would influence your decision to join an investment group?",
+    "type": "checkbox",
+    "required": true,
+    "options": [
+      "Trust in members",
+      "Clear legal agreements",
+      "Low fees",
+      "High ROI potential"
+    ]
+  },
+  {
+    "id": 9,
+    "question": "What features would make you feel more secure when investing with a group?",
+    "type": "checkbox",
+    "required": true,
+    "options": [
+      "Transparent tracking",
+      "Legal & compliance support",
+      "Community discussions",
+      "Automated profit-sharing"
+    ]
+  },
+  {
+    "id": 10,
+    "question": "How often would you like to receive updates on your investments?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": ["Daily", "Weekly", "Monthly"]
+  },
+  {
+    "id": 11,
+    "question": "Would you recommend a group investment platform to others?",
+    "type": "multiple-choice",
+    "required": true,
+    "options": ["Yes", "No", "Maybe"]
+  },
+  {
+    "id": 12,
+    "question": "Any suggestions on how we can improve collaborative investing?",
+    "type": "text",
+    "required": false
+  }
+]
